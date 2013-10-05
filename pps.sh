@@ -73,7 +73,7 @@ rxlr=$(printf "%1.3f" $rxlinerate)
 txlr=$(printf "%1.3f" $txlinerate)
 
 # Print the results
-echo -e "Int: ${INT} | [RX] PPS: ${rxppsnew} | Bytes: ${rxbytesnew} | % of LR: $rxlr \
--- [TX] PPS: ${txppsnew} | Bytes: $txbytesnew | % of LR: $txlr"
+echo -e "Int: ${INT} | [RX] PPS: ${rxppsnew} | BPS: ${rxbytesnew} | % of LR: $rxlr \
+-- [TX] PPS: ${txppsnew} | BPS: $txbytesnew | % of LR: $txlr"
 
 done
