@@ -14,11 +14,17 @@ from Linux kernel statistics by reading from procfs.
 EOF
 }
 
-# Print warning and exit if no arguments specified
-if [ $# -lt 1 ]; then
-echo "Please specify an argument!, try $0 -h for more information"
-exit 1
+argcheck() {
+if [ $ARGC -lt $1 ]; then
+	echo "Please specify an argument!, try $0 -h for more information"
+        exit 1
 fi
+}
+
+ARGC=$#
+
+# Print warning and exit if less than n arguments specified
+argcheck 1
 
 # option and argument handling
 while getopts "hi:" OPTION
