@@ -9,7 +9,7 @@ from Linux kernel statistics by reading from procfs.
 
       Options:
 
-        -i interface
+      -i interface(s)	Interface or interfaces (sep:,) e.g. \`\`-i eth0,eth1,eth2''
 
 EOF
 }
@@ -35,7 +35,7 @@ do
              exit
              ;;
          i)
-             INT="$OPTARG"
+	     INTERFACES=$(echo $OPTARG | sed 's/,/ /g')
 	     ;;
 	 *)
 	     usage
@@ -46,40 +46,49 @@ done
 
 echo "^C to exit"
 
-# Get speed of NIC
-speed=$(cat /sys/class/net/$INT/speed)
 
 while true;
 do
 
-# Get number of packets for interface
-rxppsold=$(awk "/$INT/ "'{ print $3 }' /proc/net/dev)
-txppsold=$(awk "/$INT/ "'{ print $11 }' /proc/net/dev)
+	for INT in $INTERFACES
+	do
 
-# Get number of bytes for interface
-rxbytesold=$(awk "/$INT/ "'{ print $2 }' /proc/net/dev)
-txbytesold=$(awk "/$INT/ "'{ print $10 }' /proc/net/dev)
+		# Get speed of NIC
+		speed=$(cat /sys/class/net/$INT/speed)
 
-sleep 1
+		# Get number of packets for interface
+		rxppsold=$(awk "/$INT/ "'{ print $3 }' /proc/net/dev)
+		txppsold=$(awk "/$INT/ "'{ print $11 }' /proc/net/dev)
 
-# Get number of packets for interface again and subtract from old
-rxppsnew=$(awk -v rxppsold="$rxppsold" "/$INT/ "'{ rxppsnew = $3; print rxppsnew - rxppsold }' /proc/net/dev)
-txppsnew=$(awk -v txppsold="$txppsold" "/$INT/ "'{ txppsnew = $11; print txppsnew - txppsold }' /proc/net/dev)
+		# Get number of bytes for interface
+		rxbytesold=$(awk "/$INT/ "'{ print $2 }' /proc/net/dev)
+		txbytesold=$(awk "/$INT/ "'{ print $10 }' /proc/net/dev)
 
-# Get number of bytes for interface again and subtract from old
-rxbytesnew=$(awk -v rxbytesold="$rxbytesold" "/$INT/ "'{ rxbytesnew = $2; print rxbytesnew - rxbytesold }' /proc/net/dev)
-txbytesnew=$(awk -v txbytesold="$txbytesold" "/$INT/ "'{ txbytesnew = $10; print txbytesnew - txbytesold }' /proc/net/dev)
+		sleep 1
 
-# Calculate percentage of line-rate from number of bytes per second.
-rxlinerate=$(echo "$rxbytesnew / 125000 / $speed * 100" | bc -l)
-txlinerate=$(echo "$txbytesnew / 125000 / $speed * 100" | bc -l)
+		# Get number of packets for interface again and subtract from old
+		rxppsnew=$(awk -v rxppsold="$rxppsold" "/$INT/ "'{ \
+			rxppsnew = $3; print rxppsnew - rxppsold }' /proc/net/dev)
+		txppsnew=$(awk -v txppsold="$txppsold" "/$INT/ "'{ \
+			txppsnew = $11; print txppsnew - txppsold }' /proc/net/dev)
 
-# Format line-rate values by truncating after the 1000th decimal place.
-rxlr=$(printf "%1.3f" $rxlinerate)
-txlr=$(printf "%1.3f" $txlinerate)
+		# Get number of bytes for interface again and subtract from old
+		rxbytesnew=$(awk -v rxbytesold="$rxbytesold" "/$INT/ "'{ \
+			rxbytesnew = $2; print rxbytesnew - rxbytesold }' /proc/net/dev)
+		txbytesnew=$(awk -v txbytesold="$txbytesold" "/$INT/ "'{ \
+			txbytesnew = $10; print txbytesnew - txbytesold }' /proc/net/dev)
 
-# Print the results
-echo -e "Int: ${INT} | [RX] PPS: ${rxppsnew} | BPS: ${rxbytesnew} | % of LR: $rxlr \
+		# Calculate percentage of line-rate from number of bytes per second.
+		rxlinerate=$(echo "$rxbytesnew / 125000 / $speed * 100" | bc -l)
+		txlinerate=$(echo "$txbytesnew / 125000 / $speed * 100" | bc -l)
+
+		# Format line-rate values by truncating after the 1000th decimal place.
+		rxlr=$(printf "%1.3f" $rxlinerate)
+		txlr=$(printf "%1.3f" $txlinerate)
+
+		# Print the results
+	echo -e "Int: ${INT} | [RX] PPS: ${rxppsnew} | BPS: ${rxbytesnew} | % of LR: $rxlr \
 -- [TX] PPS: ${txppsnew} | BPS: $txbytesnew | % of LR: $txlr"
 
+	done
 done
