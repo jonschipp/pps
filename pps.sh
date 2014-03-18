@@ -10,6 +10,7 @@ from Linux kernel statistics by reading from procfs.
       Options:
 
       -i interface(s)	Interface or interfaces (sep:,) e.g. \`\`-i eth0,eth1,eth2''
+      -t <int>		Time interval in seconds (def: 1)
 
 EOF
 }
@@ -21,13 +22,14 @@ if [ $ARGC -lt $1 ]; then
 fi
 }
 
+INTERVAL=1
 ARGC=$#
 
 # Print warning and exit if less than n arguments specified
 argcheck 1
 
 # option and argument handling
-while getopts "hi:" OPTION
+while getopts "hi:t:" OPTION
 do
      case $OPTION in
          h)
@@ -36,6 +38,9 @@ do
              ;;
          i)
 	     INTERFACES=$(echo $OPTARG | sed 's/,/ /g')
+	     ;;
+         t)
+	     INTERVAL=$OPTARG
 	     ;;
 	 *)
 	     usage
@@ -64,7 +69,7 @@ do
 		rxbytesold=$(awk "/$INT/ "'{ sub(":", " "); print $2 }' /proc/net/dev)
 		txbytesold=$(awk "/$INT/ "'{ sub(":", " "); print $10 }' /proc/net/dev)
 
-		sleep 1
+		sleep $INTERVAL
 
 		# Get number of packets for interface again and subtract from old
 		rxppsnew=$(awk -v rxppsold="$rxppsold" "/$INT/ "'{ \
