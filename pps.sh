@@ -96,8 +96,7 @@ do
 		txlr=$(printf "%1.3f" $txlinerate)
 
 		# Print the results
-	echo -e "Int: ${INT} | [RX] PPS: ${rxppsnew} | BPS: ${rxbytesnew} | % of LR: $rxlr \
--- [TX] PPS: ${txppsnew} | BPS: $txbytesnew | % of LR: $txlr"
+        	echo -e "${ORANGE}Int${END}: $RED${INT}$END ${BLUE}|${END} $ORANGE[$END${RED}RX${END}$ORANGE]$END ${ORANGE}PPS${END}: $RED${rxppsnew}$END ${BLUE}|${END} ${ORANGE}BPS${END}: $RED${rxbytesnew}$END ${BLUE}|${END} ${ORANGE}% of LR${END}: ${RED}$rxlr${END} ${BLUE}--${END} $ORANGE[$END${RED}TX${END}$ORANGE]$END ${ORANGE}PPS${END}: $RED${txppsnew}$RED ${BLUE}|${END} ${ORANGE}BPS${END}: ${RED}$txbytesnew${END} ${BLUE}|${END} ${ORANGE}% of LR${END}: ${RED}$txlr${END}"
 
 	done
 done
