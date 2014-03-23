@@ -53,7 +53,7 @@ do
      esac
 done
 
-echo "^C to exit"
+echo -e "${BLUE}^C to exit${END}"
 
 
 while true;
