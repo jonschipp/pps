@@ -23,6 +23,10 @@ fi
 }
 
 INTERVAL=1
+END='\e[m'
+RED='\e[0;31m'
+BLUE='\e[0;34m'
+ORANGE='\e[0;33m'
 ARGC=$#
 
 # Print warning and exit if less than n arguments specified
