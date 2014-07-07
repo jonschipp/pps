@@ -3,6 +3,7 @@
 `pps` - Script to print interface statistics.
 
 Calculates PPS, BPS, and percentage of line-rate (LR) from Linux kernel statistics by reading from procfs.
+Requires sysfs and procfs.
 
 #### Single interface statistics:
 ```shell
