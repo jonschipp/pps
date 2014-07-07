@@ -29,6 +29,12 @@ BLUE='\e[0;34m'
 ORANGE='\e[0;33m'
 ARGC=$#
 
+# Check for dependency filesystems
+if ! [ -d /sys ] || ! [ -d /proc ]; then
+        echo "$0 requires sysfs and procfs"
+        exit $UNKNOWN
+fi
+
 # Print warning and exit if less than n arguments specified
 argcheck 1
 
