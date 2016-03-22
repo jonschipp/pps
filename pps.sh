@@ -89,8 +89,8 @@ while true; do
     	sub(":", " "); txbytesnew = $10; print txbytesnew - txbytesold }' /proc/net/dev)
     
     # Calculate percentage of line-rate from number of bytes per second.
-    rxlinerate=$(echo "$rxbytesnew / 125000 / $speed * 100" | bc -l)
-    txlinerate=$(echo "$txbytesnew / 125000 / $speed * 100" | bc -l)
+    rxlinerate=$(($rxbytesnew / 125000 / $speed * 100))
+    txlinerate=$(($txbytesnew / 125000 / $speed * 100))
     
     # Format line-rate values by truncating after the 1000th decimal place.
     rxlr=$(printf "%1.3f" $rxlinerate)
